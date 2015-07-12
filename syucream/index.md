@@ -5,7 +5,11 @@ Author(romaji): syu_cream
 
 # SHOW BY QUIC!!
 
-自己紹介、記事紹介
+こんにちは、 @syu_cream です。
+本記事では、最近一部界隈を賑わしている、 Google が提唱する高速プロトコル QUIC \*1 \*2 について特徴や仕様、そして実装の簡単な紹介をしてみようと思います。
+
+記事の内容には注意を払ってはおりますが、正確性が保証されているものではありません。気になる箇所についてはぜひ、ご自身で仕様のドラフトや実装を読んで確かめてみてください。（そしてこっそりご報告いただけると幸いです...:D）
+また、 QUIC は仕様がドラフトの状態であり、将来的に大きな変更がある可能性がありますのでご注意ください。
 
 ## QUIC とは
 
@@ -23,4 +27,6 @@ Chromium の実装を読んで、関心のあるところを詳解
 
 ## 参考文献
 
+1. QUIC: A UDP-Based Secure and Reliable Transport for HTTP/2 : http://tools.ietf.org/html/draft-tsvwg-quic-protocol-00
+2. Google、高速プロトコル「QUIC」をChromeとモバイルのデフォルトに : http://www.itmedia.co.jp/news/articles/1504/20/news046.html
 
