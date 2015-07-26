@@ -22,7 +22,7 @@ QUIC について記述する上で重要な箇所については触れますが
 ## QUIC(Quick UDP Internet Connection) とは
 
 QUIC(Quick UDP Internet Connection) は HTTP 通信の高速化のために HTTP/2 から更に進んだ最適化を行うプロトコルです。
-現在 2 個目の [Internet-Draft](https://tools.ietf.org/id/draft-tsvwg-quic-protocol-01.html) が出ている（番号上は 01 番）状態です。
+現在 2 個目の [Internet-Draft](http://tools.ietf.org/html/draft-tsvwg-quic-protocol-01) が出ている（番号上は 01 番）状態です。
 ちなみに [QUIC のパケットロスからのリカバリと輻輳制御については別の Internet-Draft](https://tools.ietf.org/html/draft-tsvwg-quic-loss-recovery-00) が、 [ハンドシェイク部分については Google Docs にドキュメント](https://docs.google.com/document/d/1g5nIXAIkN_Y-7XJW5K45IblHd_L2f5LTaDUDwvZ5L6g/edit) がそれぞれ独立して存在する状態になっています。
 また、 Chromium には既に QUIC が実装されています。（あなたが Google Chrome を使っているのであれば、既に無意識のうちに QUIC を使っているかもしれません！）
 Chromium における実装が気になる方は、 [Chromium のリポジトリ](https://chromium.googlesource.com/chromium/src.git/+/master/net/quic/) を参照してみるのも良いかもしれません。
