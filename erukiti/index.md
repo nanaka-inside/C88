@@ -171,15 +171,15 @@ appExpress.listen(8080);
 
 　`appExpress.get(URL, callback)`でURLにアクセスしたらcallbackが実行されます。callbackには`req`,`res`という二つのオブジェクトが渡されますが、`req`はリクエスト情報(アクセス方法など)、`res`はブラウザ情報を返すためのオブジェクトです。`res.download(path)`により、`path`のファイルをブラウザにダウンロードさせるという挙動を登録しています。
 
-　`appExpress.listen(8080)`でウェブサーバーを8080ポートで立ち上げていますので、実際にブラウザにhttp://localhost:8080/app.jsを打ち込んでみましょう。app.jsをダウンロードできたはずです。
+　`appExpress.listen(8080)`でウェブサーバーを8080ポートで立ち上げていますので、実際にブラウザに http://localhost:8080/app.js を打ち込んでみましょう。app.jsをダウンロードできたはずです。
 
 ## ドラッグ＆ドロップしたファイル名を伝える方法
 
-　renderer.jsでドラッグ＆ドロップしたファイル名はどうやればexpressを立ち上げたapp.jsに伝わるのでしょうか。ここで重要なことを一つお伝えします。app.jsの動いているNode.jsとrenderer.jsの動いてるChromiumはそれぞれ別プロセスで動いているため、プロセス間通信を行う必要があります。app.js側をメインプロセス、renderer.js側をレンダラープロセスと言います。
+　renderer.jsでドラッグ＆ドロップしたファイル名はどうやればexpressを立ち上げたapp.jsに伝わるのでしょうか。ここで重要なことですが、app.jsの動いているNode.jsとrenderer.jsの動いてるChromiumはそれぞれ別プロセスで動いているため、プロセス間通信を行う必要があります。app.js側をメインプロセス、renderer.js側をレンダラープロセスと言います。
 
 ```javascript
 // メインプロセスから送信
-mainWindow.webContents.send('hoge', 'fuga);
+mainWindow.webContents.send('hoge', 'fuga');
 
 // レンダラープロセスで受信
 ipc = require('ipc');
@@ -324,7 +324,7 @@ ipc.on('address', function(msg) {
 });
 ```
 
-　このアプリケーションは発展の余地があります。もし良ければ是非とも改造してみてください。筆者が改良を加えたバージョンはhttp://github.com/erukiti/zoi/にて公開中です。
+　このアプリケーションは発展の余地があります。もし良ければ是非とも改造してみてください。筆者が改良を加えたバージョンは http://github.com/erukiti/zoi/ にて公開中です。
 
 * 日本語ファイル名に対応する (urlencode)
 * 同じファイル名が登録されても大丈夫なようにする
