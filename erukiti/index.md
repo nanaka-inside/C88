@@ -19,9 +19,9 @@ author(romaji): erukiti
 
 　さて、Node.jsを使うためにはコマンドラインが必要です。Windowsの方は何らかのコマンドライン、MacやLinuxの方はお好みのターミナルを開いてみてください。以下はMacを前提に書きますが、Windows の人はいい感じに読み替えてみてください。
 
-　うまく`node`コマンドが実行できればパッケージマネージャの`npm`もインストールされているはずです。作業ディレクトリに移動して初期化をしましょう。`npm init -y`を実行してauthor(あなたの名前)を入力すればパッケージをインストールできるようになります。`electron-prebuilt`, `express`, `rx` の三つのパッケージを作業ディレクトリにインストールしましょう。
+　うまく`node`コマンドが実行できればパッケージマネージャの`npm`もインストールされているはずです。作業ディレクトリに移動して初期化をしましょう。`npm init -y`を実行してauthor(あなたの名前)を入力すればパッケージをインストールできるようになります。electron-prebuilt, express, rxの三つのパッケージを作業ディレクトリにインストールしましょう。
 
-```
+```sh
 $ node -e 'console.log("hello, world");'
 hello, world
 $ npm init -y
@@ -33,7 +33,7 @@ $ npm install electron-prebuilt express rx --save
 
 　環境も整ったのでElectronでHello, Worldを表示するアプリケーションを書いてみたいと思います。まずは、Electronを起動するためのコードを書きます。ここではapp.jsというファイル名でコードを書きます。
 
-```
+```javascript
 var app = require('app');
 var BrowserWindow = require('browser-window');
 
@@ -52,19 +52,19 @@ app.on('ready', function() {
 });
 ```
 
-　見ればなんとなくわかるかもしれません。BrowserWindowオブジェクトを生成することでElectronに内蔵されたChromiumのウィンドウが開かれ、loadUrlメソッドでapp.jsと同じディレクトリにあるindex.htmlが開かれます。このindex.htmlにはひとまず<code>Hello, World.</code>とだけ書いておきましょう。
+　見ればなんとなくわかるかもしれません。`BrowserWindow`オブジェクトを生成することでElectronに内蔵されたChromiumのウィンドウが開かれ、`loadUrl`メソッドでapp.jsと同じディレクトリにあるindex.htmlが開かれます。このindex.htmlにはひとまずHello, World.とでも書いておきましょう。
 
-　あとは、コマンドラインで<code>./node_modules/.bin/electron app.js</code>を実行すれば、Hello, world.と書かれた白いウィンドウが開くはずです。
+　あとは、コマンドラインで`./node_modules/.bin/electron app.js`を実行すれば、Hello, world.と書かれた白いウィンドウが開くはずです。
 
 ### TIPS
 
-* メニューのViewからToggle Developer Toolsを開くか、Command+Option+I を押せば、Chromeと同じDeveloper Toolsを使用することができます。デバッグの便利なので是非とも使いこなしましょう。
+* メニューの`View`から`Toggle Developer Tools`を開くか、`Command+Option+I`を押せば、Chromeと同じDeveloper Toolsを使用することができます。デバッグの便利なので是非とも使いこなしましょう。
 
 ## Rx (Reactive Extensions)
 
 　Rxは非同期処理をコレクション操作と同じように書ける、FRP(関数語リアクティブプログラミング)を実現してくれるライブラリで、元々Microsoftが.Netで開発したもので今はMicrosoftやNetflixが様々な言語に移植しているもので、その中でもRxJSはRxのJavaScript版です。例えばこのプログラムは、画面をクリックしたら、コンソールにclickedと表示するプログラムです。
 
-```
+```javascript
 Rx.Observable.fromEvent(document, "mouseup")
   .subscribe(function(ev) {console.log("clicked"))
 ```
@@ -73,21 +73,21 @@ Rx.Observable.fromEvent(document, "mouseup")
 
 　Rxではデータの流れる一連の流れをストリームと呼びます。上記サンプルの`Rx.Observable.fromEvent(...)`で生成されるのがストリームで、このストリームにはマウスのボタンを放した時のイベントが流れます。`Rx.Observable.just(1, 2, 3)`ならば、1と2と3が流れるストリームです。このストリームに流れるデータをメッセージと言います。
 
-　ストリームをsubscribe()すればメッセージを受信して、それに応じた処理を行うことができますが、単にマウスボタンのイベントを受信するだけでは物足りなく感じるところです。そこでオペレータと呼ばれる、メッセージを加工する処理を行ってみましょう。
+　ストリームを`subscribe`すればメッセージを受信して、それに応じた処理を行うことができますが、単にマウスボタンのイベントを受信するだけでは物足りなく感じるところです。そこでオペレータと呼ばれる、メッセージを加工する処理を行ってみましょう。
 
-```
+```javascript
 Rx.Observable.just("hoge", "fugapiyo")
   .map(function(s) {return s.length;})
   .subscribe(function(n) {console.log(n);)
 ```
 
-　mapオペレータは、メッセージを加工することができます。メッセージの文字列を、長さの数字に変換しているものです。
+　`map`オペレータは、メッセージを加工することができます。メッセージの文字列を、長さの数字に変換しているものです。
 
 ## Electron+Rx
 
-　Rxについて概略を説明したところで、Electronのコードで実際にRxを使ってみましょう。まずは先ほどは`Hello, World.`としか書かなかったindex.htmlを書き換えてみましょう。
+　Rxについて概略を説明したところで、Electronのコードで実際にRxを使ってみましょう。まずは先ほどはHello, World.としか書かなかったindex.htmlを書き換えてみましょう。
 
-```
+```html
 <!DOCTYPE html>
 <html lang="ja">
   <meta charset="utf-8">
@@ -104,7 +104,7 @@ Rx.Observable.just("hoge", "fugapiyo")
 
 　さて、次にrenderer.jsを書いてみましょう。ここではRxの簡単なコードを書いてみようかと思います。さきほどRxの説明にもあったマウスクリックにまつわる処理をここでは書いてみます。
 
-```
+```javascript
 var clickStream = Rx.Observable.fromEvent(document, "mouseup");
 var test = document.getElementById('test')
 clickStream
@@ -128,11 +128,11 @@ clickStream
 
 ### ドラッグ＆ドロップを実現する
 
-　まずはドラッグ＆ドロップを実装してみましょう。HTML5にはドラッグ＆ドロップの機能があって、例えばdocumentオブジェクトのdrop/dragoverイベントをいじれば実装が可能です。
+　まずはドラッグ＆ドロップを実装してみましょう。HTML5にはドラッグ＆ドロップの機能があって、例えば`document`オブジェクトの`drop`, `dragover`イベントをいじれば実装が可能です。
 
 　renderer.jsを以下のコードに置き換えてみてください。ファイルをドラッグ＆ドロップすればコンソールにファイル名が出力されます。
 
-```
+```javascript
 Rx.Observable.fromEvent(document, 'drop')
   .map(function(ev) {
     ev.preventDefault();
@@ -150,7 +150,7 @@ Rx.Observable.fromEvent(document, 'dragover')
   });
 ```
 
-　dropイベントのsubscribeに渡ってきたfilesはFileListオブジェクトですがこのオブジェクトはlengthメソッドでファイル数を数えることができ、itemメソッドで個々のファイル情報を取得できます。ここではコンソールにファイル情報のパス名を出力しています。ちなみにFileListオブジェクトは配列との互換性はなく`for (file in files)`のような方法で個々のファイルを取り出すことはできません。
+　`drop`イベントの`subscribe`に渡ってきた`files`は`FileList`オブジェクトですがこのオブジェクトは`length`メソッドでファイル数を数えることができ、`item`メソッドで個々のファイル情報を取得できます。ここではコンソールにファイル情報のパス名を出力しています。ちなみに`FileList`オブジェクトは配列との互換性はなく`for (file in files)`のような方法で個々のファイルを取り出すことはできません。
 
 　ドラッグ＆ドロップ実装の注意点ですが、drop / dragover イベントをそれぞれpreventDefault()しないとChromiumの既存の動作として、ファイルがブラウザにそのまま出力されてしまいます。
 
@@ -158,7 +158,7 @@ Rx.Observable.fromEvent(document, 'dragover')
 
 　ドラッグ＆ドロップはいったん置いておいて、ローカルでウェブサーバーを立ち上げます。これはChromiumではなくNode.jsの機能です。expressという標準的なウェブサーバーのパッケージを使います。
 
-```
+```javascript
 var express = require('express');
 
 var appExpress = express();
@@ -169,15 +169,15 @@ appExpress.get('/app.js', function(req, res){
 appExpress.listen(8080);
 ```
 
-　appExpress.get(URL, callback)でURLにアクセスしたらcallbackが実行されます。callbackにはreq, resという二つのオブジェクトが渡されますが、reqはリクエスト情報(アクセス方法など)、resはブラウザ情報を返すためのオブジェクトです。res.download(path)により、pathのファイルをブラウザにダウンロードさせるという挙動を登録しています。
+　`appExpress.get(URL, callback)`でURLにアクセスしたらcallbackが実行されます。callbackには`req`,`res`という二つのオブジェクトが渡されますが、`req`はリクエスト情報(アクセス方法など)、`res`はブラウザ情報を返すためのオブジェクトです。`res.download(path)`により、`path`のファイルをブラウザにダウンロードさせるという挙動を登録しています。
 
-　appExpress.listen(8080)でウェブサーバーを8080ポートで立ち上げていますので、実際にブラウザにhttp://localhost:8080/app.jsを打ち込んでみましょう。app.jsをダウンロードできたはずです。
+　`appExpress.listen(8080)`でウェブサーバーを8080ポートで立ち上げていますので、実際にブラウザにhttp://localhost:8080/app.jsを打ち込んでみましょう。app.jsをダウンロードできたはずです。
 
 ## ドラッグ＆ドロップしたファイル名を伝える方法
 
 　renderer.jsでドラッグ＆ドロップしたファイル名はどうやればexpressを立ち上げたapp.jsに伝わるのでしょうか。ここで重要なことを一つお伝えします。app.jsの動いているNode.jsとrenderer.jsの動いてるChromiumはそれぞれ別プロセスで動いているため、プロセス間通信を行う必要があります。app.js側をメインプロセス、renderer.js側をレンダラープロセスと言います。
 
-```
+```javascript
 // メインプロセスから送信
 mainWindow.webContents.send('hoge', 'fuga);
 
@@ -202,7 +202,7 @@ ipc.on('hoge', function(ev, msg) {
 
 　画面が寂しいので、ドラッグ＆ドロップした時にファイル名・URLなどを表示したいと思いますが、少し足りない情報があります。それはURLの文字列のはじめの方でIPとポート番号です。ポート番号は先ほどexpressを立ち上げた時に指定しているので、その数字をそのまま使えばいいとして、IPアドレスはどうやれば知ることができるでしょうか。
 
-```
+```javascript
 var os = require('os');
 
 var ifs = [];
@@ -220,7 +220,7 @@ for (var dev in interfaces) {
 
 ## 最終的なソース
 
-```
+```javascript
 var app = require('app');
 var BrowserWindow = require('browser-window');
 var express = require('express');
@@ -268,7 +268,7 @@ ipc.on('path', function(ev, msg) {
 appExpress.listen(port);
 ```
 
-```
+```html
 <!DOCTYPE html>
 <html lang="ja">
   <meta charset="utf-8">
@@ -290,7 +290,7 @@ appExpress.listen(port);
 </html>
 ```
 
-```
+```javascript
 ipc = require('ipc');
 path = require('path');
 
