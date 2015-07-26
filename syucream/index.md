@@ -22,7 +22,7 @@ QUIC について記述する上で重要な箇所については触れますが
 ## QUIC(Quick UDP Internet Connection) とは
 
 QUIC(Quick UDP Internet Connection) は HTTP 通信の高速化のために HTTP/2 から更に進んだ最適化を行うプロトコルです。
-現在 2 個目の [Internet-Draft](https://tools.ietf.org/id/draft-tsvwg-quic-protocol-01.html) が出ている（番号上は 01 番）状態です。
+現在 2 個目の [Internet-Draft](http://tools.ietf.org/html/draft-tsvwg-quic-protocol-01) が出ている（番号上は 01 番）状態です。
 ちなみに [QUIC のパケットロスからのリカバリと輻輳制御については別の Internet-Draft](https://tools.ietf.org/html/draft-tsvwg-quic-loss-recovery-00) が、 [ハンドシェイク部分については Google Docs にドキュメント](https://docs.google.com/document/d/1g5nIXAIkN_Y-7XJW5K45IblHd_L2f5LTaDUDwvZ5L6g/edit) がそれぞれ独立して存在する状態になっています。
 また、 Chromium には既に QUIC が実装されています。（あなたが Google Chrome を使っているのであれば、既に無意識のうちに QUIC を使っているかもしれません！）
 Chromium における実装が気になる方は、 [Chromium のリポジトリ](https://chromium.googlesource.com/chromium/src.git/+/master/net/quic/) を参照してみるのも良いかもしれません。
@@ -220,7 +220,7 @@ QUIC のパケットにはヘッダとして下記の情報が付与されます
 
 QUIC のパケットは下記の 4 種類が存在し、フラグの内容によって識別されます。
 
-1. バージョンネゴシエーションパケット
+* 1. バージョンネゴシエーションパケット
 
 使用する QUIC のバージョンを変更する際に使用されるパケットです。
 実は現在の QUIC の Internet-Draft では詳細が記載されていないのですが、ここでは Chromium の実装を読んで筆者が把握した点を記述してみます。
@@ -229,7 +229,7 @@ QUIC のパケットは下記の 4 種類が存在し、フラグの内容によ
 エンドポイントがパケットを受信し、パケットのヘッダに含まれる QUIC バージョンを読み取った際に、それが自分がサポートしていない値だった時にこのパケットを送って使用バージョンを切り替えることができます。
 （ちなみにサポートしていないバージョンを想定して送られたパケットは再送されることになります）
 
-2. フレームパケット
+* 2. フレームパケット
 
 QUIC でやりとりするメッセージ単位であるフレームを表現します。
 フレームにもいくつか種類が存在します。詳しくは後述します。
@@ -237,12 +237,12 @@ QUIC でやりとりするメッセージ単位であるフレームを表現し
 
 ![図5. QUIC のパケットとフレーム](img/fig05.png)
 
-3. FEC パケット
+* 3. FEC パケット
 
 前述した前方誤り訂正に用いられるパリティを伝えるためのパケットです。
 このパケットのペイロードには具体的には、 FEC グループのパケットのデータ（を必要に応じてパディングを加えたもの）の XOR をとったものが設定されます。
 
-4. Public Reset パケット
+* 4. Public Reset パケット
 
 このパケットに関しても現在の Internet-Draft には詳細が記述されていません。
 PRST という値の QUIC タグを設定しピアに送信するフィールドを持ちます。
@@ -351,22 +351,22 @@ crypto handshake メッセージには下記のような情報が含まれます
 
 handshake メッセージによるコネクションの確立は下記のようなフローになります。
 
-1. クライアントがサーバに対して inchoate CHLO(初期 CHLO) を送る
+* 1. クライアントがサーバに対して inchoate CHLO(初期 CHLO) を送る
 
 クライアントが CHLO を送ることでコネクションの確立処理が始まります。
 CHLO メッセージではサーバ設定などの情報を付加することができるのですが、初めて CHLO を送る時点ではクライアントはそれらを持っていないので付与されません。
 また、 VER と PDMD 、それに合わせてクライアントの持つ証明書に関する情報によって、 CCS, CCRT も付与されます。
 
-2. サーバが REJ を返す
+* 2. サーバが REJ を返す
 
 SCFG, STK, SNO を付与した REJ を返します。
 CHLO の PDMD, CCS, CCRT の内容に従って CRT も付与します。
 
-3. クライアントがサーバに対して CHLO を送る
+* 3. クライアントがサーバに対して CHLO を送る
 
 サーバから受け取った STK, SNO と、SCFG を特定する ID である SCID、鍵交換パラメータ PUBS を付与します。
 
-4. サーバが SHLO を返す
+* 4. サーバが SHLO を返す
 
 クライアントから受け取った CHLO に問題がなければ SHLO を返します。
 
