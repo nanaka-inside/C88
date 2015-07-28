@@ -358,8 +358,98 @@ sqlContext.sql(
 ...
 ```
 
-DataFrameは素直にSQLを動作させてくれます。しかし、当たり前ではありますが一般的なRDBに対するSQLの最適化はあまり訳にたたなかったりするので注意です。
-最適化するより、SELECT句やFROM句などにサブクエリ仕込んだほうが早く動いてくれたりします。
+DataFrameは素直にSQLを動作させてくれます。ここでは日付ごとのソートもばっちりです。
+しかし、当たり前ではありますが一般的なRDBに対するSQLの最適化はあまり訳にたたなかったりするので注意です。
+SELECT句やFROM句などにサブクエリ仕込んだほうが早く動いてくれたりします。
+
+次は、他のSparkの機能について見てみましょう。
+
+ライブラリを活用する
+===============
+
+Sparkはライブラリが充実しているのも一つの特徴です。以下のライブラリがBuilt-inされています
+
+- SparkStreaming
+  - ストリーミングデータを扱うためのライブラリ。ストリーミングデータに対してRDDと同様の操作でデータを統合したり変換したりし、最後に出力する
+  - 動作するWindow幅、Slide幅なども時間単位で設定できる
+- SparkSQL
+  - SQLで問い合わせたりするためのライブラリ
+  - すでにDataFrameで使用している
+  - 問い合わせの細かい最適化などを行ってくれるナイスガイ
+- MLlib
+  - 機械学習に関する操作を提供するライブラリ
+  - 2値分類、多値分類、クラスタリング、協調フィルタリングなどが使用できる
+  - 機械学習はイテレーションを行うため、HadoopMapReduceと比較して学習する速度の向上が期待できる
+- GraphX
+  - グラフ処理に関する操作を提供するライブラリ
+  - 例えばページランクアルゴリズムなどはこれを使えばすんなりかける
+  - それ以外にも、中心性導出などの処理も書ける
+
+つまり、その気になればStreamingデータをSQLで変換し、そのデータをそのまま何らかの分類器の学習済みモデルで分類する、みたいな操作も可能です。
+
+今回はStreamingに着目し、Twitterのパブリックタイムラインから日本語のツイートを抽出し、30秒ごとに感情のネガポジを判定するクエリを書いてみましょう。
+
+```scala
+import org.apache.spark.streaming.StreamingContext
+import org.apache.spark.streaming.dstream.DStream
+import org.apache.spark.streaming.twitter.TwitterUtils
+import org.atilika.kuromoji.Tokenizer
+import twitter4j.Status
+import scala.collection.JavaConversions._
+
+object TwitterPassion extends Serializable with App {
+  // window幅、slide幅30秒のStreamを作成する
+  // これは、30秒ごとに、30秒以内のデータに対して、以下の処理を行うものだと考えて良い
+  val ssc: StreamingContext = new StreamingContext(sc, Seconds(30))
+
+  // 単語からネガ・ポジ判定出来る辞書を作る
+  // 東京工業大学の高村大地氏の単語感情極性対応表を利用させて頂いている
+  // http://www.lr.pi.titech.ac.jp/~takamura/index_j.html
+  // Model#getPassionDictionaryで高村大地氏の対応表を呼び出している
+  val passionDictionary = Model.getPassionDictionary.map(_.split(":")).map(
+    p => Map(p(0) -> p(3).toFloat, p(1) -> p(3).toFloat)
+  ).reduceLeft(_ ++ _)
+
+  // statuses/filterのトラックに該当するリクエストパラメータ
+  // パブリックタイムラインから、以下の文言のいずれかが含まれているツイートに絞る。
+  val filter = List("Spark", "spark")
+
+  // DStream生成
+  // RDDに相当するもの
+  // SparkStreamingはTwitter用の便利なライブラリがあるので、それを利用している
+  val twitterStream: DStream[Status] = TwitterUtils.createStream(ssc, Some(SecretImpl.getAuth.get), filter)
+
+  // kuromojiを使用して形態素に分割し、ネガポジ判定値のRDDを作る
+  // 判定できなかった文言は全部無視される
+  val toScore = twitterStream.flatMap{ st =>
+    val tokenizer = Tokenizer.builder.build
+    tokenizer.tokenize(st.getText).toList.map(
+      tok => passionDictionary.get(tok.getSurfaceForm)
+    )
+  }.filter(_.isDefined).map(_.get)
+
+  // 全部合算した値を毎回、スコアが更新される毎に出す
+  // 書き込みは30秒毎になっている
+  toScore.foreachRDD{rdd =>
+    val reduced = rdd.collect().reduce(_ + _)
+    println(reduced)
+  }
+  // Streamを流しはじめる
+  ssc.start()
+
+  3分間、何も来なければストリームを殺してアプリケーションを終了する
+  ssc.awaitTermination(1000 * 180)
+}
+```
+
+内容を簡単にいうと、30秒ごとに、30秒以内の該当するツイートを形態素に分解し、その中に単語感情極性対応表に存在する文言に対して、スコアリングし、スコアの合計を算出し、標準出力しています。
+ネガポジ判定や形態素解析自体はライブラリに頼って実装してみましたが、このようなストリーム処理を、たった30行足らずで記述できる簡易性が魅力だと思います。
+ここではTwitterのライブラリを使用していますが、TCPソケットやAkkaActorなどから受け取ったデータをストリーミングデータとしてインポートするためのメソッドや、自分でストリーミングデータをインポートするための定義を自作することも可能です。
+
+そしてもちろん、これをクラスタで処理することもできるという点が、Sparkの強みです。
+台数さえ並べる事ができれば、firehoseのような圧倒的な流量を誇るストリームに対してリアルタイムに分析、集計、可視化、分析結果の永続化などができるかもしれません。
+
+次は、いよいよクラスタの動かし方に入って行きましょう。
 
 クラスターで動かす
 ==============
@@ -396,44 +486,79 @@ cd path/to/spark/dir/
 以上のような内容でクラスタを構築します。
 なお、スレーブは9台ですが、この他にもう一台masterが1つ立つため、合計で10台のスポットインスタンスがこのクエリで立ちます。
 
-## 新たにデータを用意する
-クラスタの実験では、ニコニコの動画コメントデータと動画メターデータを用いてみたいと思います。
-大百科のヘッダデータと同様、Niiより提供されております。
-ニコニコの動画メタデータとコメントデータは、圧縮済みでそれぞれ2.9GB、50GB程度の容量を持つのテキストデータで、膨大です。
+## クエリを書く
 
-## 分析するネタ
-まずはどのコメントが最も多いのかのコメントカウントを動かした後、コメントを軸とした、動画のクラスタリングを行いたいと思います。
+本来、クラスタで処理を動かしてみるなら大きなデータの方がいいですが、
+今回はとりあえず動かしてみることを重点に置きたいため、ローカルと同じ内容のクエリを、ここでも動かせるようにしてみたいと思います。
 
-## 前処理
-しかし、ニコニコデータセットのこれらのデータはなかなか扱いにくい形式で出力されているので、今回は前処理を行い、Sparkで扱いやすいように加工します。
+### projectセットアップ
 
-まず、コメントデータは、一つのディレクトリに複数の動画IDの名前のファイルがあり、その中に動画IDに紐付いたコメントが並んでいるというような形式をとっています。
-これを、ディレクトリ名のファイルの中にある、複数動画のコメントという形式に変換し、コメントのデータに動画IDを埋め込みました。
-これは、動画IDがコメントデータに入っていないと、2つのデータをjoinして計算するのが難しいためです。
+クラスタを操作する際に、REPLは使いません。クラスタにクエリを投げ込むためには、Scalaを使用する場合はjarを作成しないといけません。
+pythonであれば、.pyファイルさえ用意できればいいです。
+Scalaの場合は、まず typesafe-activatorを使用して、Scalaのプロジェクトを作成します。
 
-また、コメントデータ、メタデータ双方とも、以下のような形式になっています。
-
-```
-{"date":1174594657,"no":1,"vpos":4443,"comment":"\u4e0d\u601d\u8b70\u306a\u8e0a\u308a\u3092\u8e0a\u3063\u305f\uff01","command":""}
-{"date":1174594960,"no":2,"vpos":15932,"comment":"\u3066\u304b\u8e74\u308b\u307e\u3067\u3046\u3054\u3044\u3061\u3083\u3044\u3051\u306a\u3044\u3093\u3058\u3083\u306a\u3044\u306e\uff1f","command":""}
-{"date":1174595040,"no":3,"vpos":23905,"comment":"\u3069\u3045\u3067\u304f","command":""}
-{"date":1174595106,"no":4,"vpos":27013,"comment":"\u3067\u3045\u3067\u304f","command":""}
-{"date":1174595111,"no":5,"vpos":27525,"comment":"\u3058\u30fc\u3060","command":""}
-{"date":1174595158,"no":6,"vpos":32266,"comment":"\u30c7\u30e5\u30c7\u30af","command":""}
-...
-```
-これはarrayのデータであると解釈できるので
-
-```json
-[
-  {"date":1174594657,"no":1,"vpos":4443,"comment":"\u4e0d\u601d\u8b70\u306a\u8e0a\u308a\u3092\u8e0a\u3063\u305f\uff01","command":""},
-  {"date":1174594960,"no":2,"vpos":15932,"comment":"\u3066\u304b\u8e74\u308b\u307e\u3067\u3046\u3054\u3044\u3061\u3083\u3044\u3051\u306a\u3044\u3093\u3058\u3083\u306a\u3044\u306e\uff1f","command":""},
-  {"date":1174595040,"no":3,"vpos":23905,"comment":"\u3069\u3045\u3067\u304f","command":""},
-  {"date":1174595106,"no":4,"vpos":27013,"comment":"\u3067\u3045\u3067\u304f","command":""},
-  {"date":1174595111,"no":5,"vpos":27525,"comment":"\u3058\u30fc\u3060","command":""},
-  {"date":1174595158,"no":6,"vpos":32266,"comment":"\u30c7\u30e5\u30c7\u30af","command":""},
-  ...
-]
+```bash
+brew install sbt typesafe-activator
+activator
 ```
 
-のようなデータに整形しました。
+を行い、 `minimal-scala` を選択、プロジェクト名を指定して作成します。
+project以下に `assembly.sbt` という名前でファイルを作成し、
+
+```
+addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "0.13.0")
+```
+と入れてください。その後、root以下のbuild.sbtを開いて、
+
+```scala
+import sbtassembly.MergeStrategy
+
+libraryDependencies ++= Seq(
+  "org.apache.spark" % "spark-core_2.11" % "1.4.0" % "provided",
+  "org.apache.spark" % "spark-sql_2.11" % "1.4.0" % "provided"
+)
+
+assemblyMergeStrategy in assembly := {
+  case PathList("javax", "servlet", xs @ _*)         => MergeStrategy.first
+  case PathList(ps @ _*) if ps.last endsWith "mailcap" => MergeStrategy.first
+  case PathList(ps @ _*) if ps.last endsWith "Logger.class" => MergeStrategy.first
+  case PathList(ps @ _*) if ps.last endsWith "Log.class" => MergeStrategy.first
+  case PathList(ps @ _*) if ps.last endsWith "class" => MergeStrategy.first
+  case PathList(ps @ _*) if ps.last endsWith "mimetypes.default" => MergeStrategy.concat
+  case PathList(ps @ _*) if ps.last endsWith "plugin.properties" => MergeStrategy.filterDistinctLines
+  case "application.conf"                            => MergeStrategy.concat
+  case "unwanted.txt"                                => MergeStrategy.discard
+  case m if m.toLowerCase.endsWith("manifest.mf")          => MergeStrategy.discard
+  case m if m.toLowerCase.matches("meta-inf.*\\.sf$")      => MergeStrategy.discard
+  case x =>
+    val oldStrategy = (assemblyMergeStrategy in assembly).value
+    oldStrategy(x)
+  case _ => MergeStrategy.first
+}
+```
+
+のように入れてください。
+assemblyを使用する事で、jarにSparkの情報を混ぜることができます。
+MergeStrategyは美しくないですが、複数jarを入れるときのconflictはとりあえずこれで回避できると思います。
+
+### mainクラスを作成する
+Scalaのメインクラスを作成し、そこにクエリを記述しましょう。
+`src/main/scala/` 以下に以下のようなクラスを作りましょう。
+
+```scala
+
+```
+
+### SparkContextと各種コンテクスト
+ここで今まで説明を省いてきた `sc` こと `SparkContext` と `SQLContext` とはなにか、というのを説明します。
+
+SparkContextは、簡単にいうと今からSparkに対して流すタスクのメタ情報を保持し、RDDを生成する各種メソッドを提供してくれます。
+`SparkContext#textFile` は何度も登場しましたね。
+REPLは、このSparkContextを予め作成して提供してくれているので気にする必要がなかったのですが、クラスタに流すときは1から書かないといけません。
+SparkContextを生成する際にはConfの情報を与えます。
+Sparkは大量に設定できる項目がありますが、それはあとにまわして、今はとりあえずApplicationの名前だけを与えてSparkContextを作りましょう。
+SQLContextも、同じようにSQLを使用するためのContextです。これは、SparkContextを与えて生成します。SQLContextはスキーマを登録し、SQLを発行できるようにしてくれる機能を有しています。
+上のStreamingの例でも、StremingContextというのが登場し、DStreamの生成を行っていました。
+データを生成してくれたり登録してくれたりする便利なやつ、だと思っておけば良いと思います。
+
+また、SparkContext以下には、RDDに関する様々な操作を便利にしてくれるimplicitメソッドなどがあるので、SparkContext以下すべてimportしておくと便利です。
