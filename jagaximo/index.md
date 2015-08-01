@@ -487,7 +487,7 @@ object TwitterPassion extends Serializable with App {
 
 次は、いよいよクラスタの動かし方に入って行きましょう。
 
-## クラスターで動かす
+## クラスタで動かす
 
 ここからはSparkの本懐であるクラスタ動作を行っていきたいと思います。
 
