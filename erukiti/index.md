@@ -324,6 +324,8 @@ ipc.on('address', function(msg) {
 });
 ```
 
+![アプリケーションの画面](capture.png)
+
 　このアプリケーションは発展の余地があります。もし良ければ是非とも改造してみてください。筆者が改良を加えたバージョンは http://github.com/erukiti/zoi/ にて公開中です。
 
 * 日本語ファイル名に対応する (urlencode)
