@@ -128,7 +128,7 @@ val strings: RDD[String] = numbers.map(number => number.toString)
 
 　RDDでつかえるメソッドは[Hishidamaさんがまとめてくださっているページ](http://www.ne.jp/asahi/hishidama/home/tech/scala/spark/RDD.html)が神がかっていて素晴らしいです。
 
-　こちらを参考に、分からない事があったりしたらソースをあさってみましょう。
+　こちらを参考に、分からない事があったりしたら[ソース](https://github.com/apache/spark)をあさってみましょう。
 
 　試しに、ワードカウントのクエリを見てみましょう。これは、一つの英文ドキュメントが与えられた時、その英文に含まれている各単語がいくつか数えるものです。Spark公式ページにもあるWordCountをそのまま持ってきて、そこにコメントをつけたものです。
 
@@ -212,7 +212,7 @@ teenagers.map(_.getValuesMap[Any](List("name", "age"))).collect().foreach(printl
 
 ```
 
-　このような感じで、case classのそれぞれの要素をスキーマとして登録してSQLを使い、その後mapなどの処理を通すことができます。同じデータで様々な分析したいときなどにSQLで問い合わせできる素地作っておくと便利です。
+　このような感じで、case classのそれぞれの要素をスキーマとして登録してSQLを使い、その後mapなどの処理を通すことができます。同じデータで様々な分析したいときなどにSQLで問い合わせできる土台を作っておくと便利です。
 
 　また、SQLを解析する際に簡単な最適化を施してくれるなどの恩恵があるからか、RDDと比較して、安定して高速で動くらしいです。DataFrameで処理できる場合は、DataFrame化して処理したほうが良さそうです。
 
