@@ -1,4 +1,4 @@
-Title: ESS「恐怖！ハードスクレイピング男」
+Title: 恐怖！ハードスクレイピング男
 Subtitle: POSIX原理主義者が教える恐怖のスクレイピング
 Author: @richmikan
 Author(romaji): Rich Mikan
@@ -7,7 +7,7 @@ Author(romaji): Rich Mikan
 <!-- 記法   https://github.com/naoya/md2inao                             -->
 
 
-# ESS「恐怖！ハードスクレイピング男」
+# 恐怖！ハードスクレイピング男
 
 説明しよう。この記事は、POSIX原理主義で世のプログラマーを洗脳し、世界征服を目論む「秘密結社シェルショッカー」の日本支部長、リッチー大佐が、何の言語もライブラリーも使わず、どのUNIXにも最初から入っているsedやAWKといっコマンドだけでHTMLを読み解くという、ベリィ・サディスティックなスクレイピングを見せつける記事なのだ！
 
