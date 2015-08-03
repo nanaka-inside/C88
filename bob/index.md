@@ -185,3 +185,7 @@ function collisionHandler(sushi, sika){
 
 ## おわりに
 　今回は、障害が起きた時に絶対起こしてくれるシステム「rein-bell」 を構築しました。これを実装してから朝早く起こされる障害が起きていないのでいまいち効果が実感できてませんが、今後は障害が起きても誰かがきっとrein-bell経由で起こしてくれるので安心して毎晩床に付けます。それでは失礼します。
+
+### 宣伝
+前回のNANAKA+INSIDE PRESS vol.6　にて書かせていただいたPebble入門に加筆修正した記事を、今年の3月にCodeZineさんにて掲載していただきました。新型のPebble Timeに関しても書いたので、読んでいただけたら幸いです！
+[新モデル「Pebble Time」も発表され大注目のプロダクト、スマートウォッチ「Pebble」の基礎知識とアプリ開発入門 (1/4)：CodeZine（コードジン）](http://codezine.jp/article/detail/8485)
