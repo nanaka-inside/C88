@@ -68,7 +68,7 @@ Author(romaji): Rich Mikan
 /文具購入リスト \n  \n  \n  \n  \n  \n  \n
 ```
 
-　元のXMLデータにはもちろん各種の値が格納されているわけだが、それぞれの値がどのタグや属性の中に格納されているかが重要だ。タグは階層構造をとっているのでファイルの格納場所をパスで表現するのと同様に、XML用のパスで表現する方法がある。それが**XPath**と呼ばれるものだ。このXPathを、値の手前に添えながら1つの値を1行で表現している(値の中に改行があるものは`\n`で表現する)。
+　元のXMLデータにはもちろん各種の値が格納されているわけだが、それぞれの値がどのタグや属性の中に格納されているかが重要だ。タグは階層構造をとっているのでファイルの格納場所をパスで表現するのと同様に、XML用のパスで表現する方法がある。それが**XPath**と呼ばれるものだ。このXPathを、値の手前に添えながら1つの値を1行で表現している(値の中に改行があるものは“`\n`”で表現する)。
 
 　XPathでは、タグの入れ子構造はスラッシュ“`/`”で表現し、タグの中の属性名はその手前に“`@`”を付けることによって表現する。この規則を踏まえて元のXMLと上記のXPathを見比べれば、その関係は容易に理解できるな。
 
@@ -79,7 +79,8 @@ Author(romaji): Rich Mikan
 　parsrx.shがどうやって変換しているかについての説明は省略するが、cat、sed、AWK、trという4種類のコマンドを計28個、パイプで繋いでいるだけだ。だから、ワンライナーで書こうと思えば書けなくもない。嘘だと思うならソースコードを見てくるがいい。
 
 ```
-https://github.com/ShellShoccar-jpn/Parsrs/blob/master/parsrx.sh
+https://github.com/ShellShoccar-jpn/Parsrs/blob
+/master/parsrx.sh
 ```
 
 　そしてもちろん、上記のコマンドはPOSIXの範囲で使えるオプションや機能しか用いていない。我らはPOSIX原理主義を崇拝しているからな。
@@ -101,7 +102,7 @@ https://github.com/ShellShoccar-jpn/Parsrs/blob/master/parsrx.sh
 
 ![ニコニコ静画](images/nicosei_top.png)
 
-ほほぅニコニコ静画か。「春」というJailがので有名だな。フッフッフ、まずはこのサイトをターゲットにしてやるか。よし、parsrx.shでパースだ。喰らえぇ！（リスト1だ）
+ほほぅニコニコ静画か。「春」というJailあるので有名なサイトだな。フッフッフ、まずはこのサイトをターゲットにしてやるか。よし、parsrx.shでパースだ。喰らえぇ！（リスト1だ）
 
     ●リスト1::ニコニコ静画TOPをXMLパーシング
     $ curl -s http://seiga.nicovideo.jp/ | ./parsrx.sh
@@ -123,7 +124,7 @@ https://github.com/ShellShoccar-jpn/Parsrs/blob/master/parsrx.sh
     iv/div/div/ul/li/a/li/a/li/a/li/a/li/a/li/a/li/a/li/a/li/a/li/a/li/div/div/div/div/div/div
        :
 
-　ギャァァァ！な、なんだこれは（リスト2）！いくらなんでもこんなに階層が深いわけがない。一体もとのHTMLソースコードはどーなっているんだ!?
+　ギャァァァ！な、なんだこれは！いくらなんでもこんなに階層が深いわけがない。一体もとのHTMLソースコードはどーなっているんだ!?（リスト2）
 
     ●リスト2::ニコニコ静画TOPのHTMLソース
         :
@@ -141,7 +142,7 @@ https://github.com/ShellShoccar-jpn/Parsrs/blob/master/parsrx.sh
     .jp/thumb/1825279z?" alt=""><span class="center_img_spring">&nbsp;</span></span></div><div
        :
 
-　イ、<img>タグが閉じてないぞ（<img />になっていない）！こんなXML的に違反しているソースコードはXMLパーサーでは捌けん。くそぅ、なんて汚いソースコード(注:飽くまで怪人のボヤキであり、ニコニコ静画のソースには何の落ち度もありません。)なんだ、ぐぬぬ……。
+　イ、`<img>`タグが閉じてないぞ（`<img />`になっていない）！こんなXML的に違反しているソースコードはXMLパーサーでは捌けん。くそぅ、なんて汚いソースコード(注:飽くまで怪人のボヤキであり、ニコニコ静画のソースには何の落ち度もありません。)なんだ、ぐぬぬ……。
 
 **リッチ―大佐**「ハードスクレイピング男よ。貴様、何をやっておるのだ！`rm -rf`するぞ」
 
@@ -196,8 +197,8 @@ https://github.com/ShellShoccar-jpn/Parsrs/blob/master/parsrx.sh
 　まずはニコニコチャートのトップページのHTMLソースをファイルに落としておく。次のコマンドを実行しておくんだ。
 
 ```
-$ curl -s http://www.nicochart.jp/ > nicochart.h
-tml
+$ curl -s http://www.nicochart.jp/ > nicochart.
+html
 ```
 
 　そして、この時点で得られるテキストデータ（抜粋）こんな感じだ。
@@ -206,13 +207,13 @@ tml
       :
 </div>
 <div id="result">
-        <table id="ranking-table" class="video…
-        <caption><strong>2015年08月02日(<span …
+        <table id="ranking-table" class="vide…
+        <caption><strong>2015年08月02日(<span…
         <tr class="first">
                 <th></th>
                 <th class="fav">
-                       <a href="ranking/">総合…
-                       <a href="top3/" title="…
+                      <a href="ranking/">総合…
+                      <a href="top3/" title="…
       :
 ```
 
@@ -250,31 +251,31 @@ $ ./parsrx.sh -n nicochart.html
 ```
       :
 /html[1]/body[1]/div[1]/div[2]/div[1] \n\n
-/html[1]/body[1]/div[1]/div[2]/div[2]/@id result
-/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/@
-id ranking-table
-/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/@
-class video-list
-/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/c
-aption[1]/strong[1]/span[1]/@class sun
-/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/c
-aption[1]/strong[1]/span[1] 日
-/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/c
-aption[1]/strong[1] 2015年08月02日()
-/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/c
-aption[1]  のデイリーランキング
-/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/t
-r[1]/@class first
-/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/t
-r[1]/th[1]
-/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/t
-r[1]/th[2]/@class fav
-/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/t
-r[1]/th[2]/a[1]/@href ranking/
-/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/t
-r[1]/th[2]/a[1] 総合
-/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/t
-r[1]/th[2]/a[2]/@href top3/
+/html[1]/body[1]/div[1]/div[2]/div[2]/@id resul
+t/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]
+/@id ranking-table
+/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/
+@class video-list
+/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/
+caption[1]/strong[1]/span[1]/@class sun
+/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/
+caption[1]/strong[1]/span[1] 日
+/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/
+caption[1]/strong[1] 2015年08月02日()
+/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/
+caption[1]  のデイリーランキング
+/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/
+tr[1]/@class first
+/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/
+tr[1]/th[1]
+/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/
+tr[1]/th[2]/@class fav
+/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/
+tr[1]/th[2]/a[1]/@href ranking/
+/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/
+tr[1]/th[2]/a[1] 総合
+/html[1]/body[1]/div[1]/div[2]/div[2]/table[1]/
+tr[1]/th[2]/a[2]/@href top3/
       :
 ```
 
@@ -285,9 +286,9 @@ r[1]/th[2]/a[2]/@href top3/
 
 　パースしたテキストは4000行以上もあるが、その全部が必要なわけじゃない。デイリーランキング表の部分だけがあればいいのでその前後をそぎ落としてしまうのだ！
 
-　元のXMLテキストを見ると、デイリーランキング表は“`<table id="ranking-table"…`”というタグ・IDなっていたので、パースしたテキストデータの中には“`@id ranking-table`”という文字列が出てくるはずだ。なので、このパターンが出現したらその時点のXPathを記憶しつつパースされたテキストの表示を始め、XPathの上位パスが変わったら（=<table>タグを抜けたら）表示を止めればいい。
+　元のXMLテキストを見ると、デイリーランキング表は“`<table id="ranking-table"…>`”というタグ・IDなっていたので、パースしたテキストデータの中には“`@id ranking-table`”という文字列が出てくるはずだ。なので、このパターンが出現したらその時点のXPathを記憶しつつパースされたテキストの表示を始め、XPathの上位パスが変わったら（=`<table>`タグを抜けたら）表示を止めればいい。
 
-　こんなテキスト加工は次のようにしてAWKを使えば簡単に書ける。ついでに、XPathの上位パスの共通部分も消してやる。今回の対象は<table>の中だけだから、その上位のパス文字列はどれも同じはずで、その同じ部分をいちいち表示してもしょうがないからな。
+　こんなテキスト加工は次のようにしてAWKを使えば簡単に書ける。ついでに、XPathの上位パスの共通部分も消してやる。今回の対象は`<table>`タグの中だけだから、その上位のパス文字列はどれも同じはずで、その同じ部分をいちいち表示してもしょうがないからな。
 
 ```
 $ ./parsrx.sh -n nicochart.html |
@@ -296,9 +297,10 @@ $ ./parsrx.sh -n nicochart.html |
 >   XPath=substr($0,1,index($0,"@")-1);
 >   started=1;
 > }
-> started && substr($1,1,length(XPath))==XPath {
->   (注:XPathの共通部分は消す)
+12345678901234567890123456789012345678901234567
+> started && substr($1,1,length(XPath))==XPath{
 >   print substr($0,length(XPath));
+>                 # (↑XPathの共通部分は消す)
 >   next;
 > }
 > started {
@@ -356,22 +358,22 @@ $ ./parsrx.sh -n nicochart.html |
 !tr<2>!td<4>!ul<1>!li<4>!a<1> 【実況】俺の不整脈
 が出ないように心電図見ててくれ part1【OUTLAST】
 !tr<2>!td<4>!ul<1>!li<4>
-!tr<2>!td<4>!ul<1> \n           \n              
-\n              \n             \n
+!tr<2>!td<4>!ul<1> \n           \n             
+ \n              \n             \n
 !tr<2>!td<4>
 !tr<2>!td<5>!@class video-info mylist are
 !tr<2>!td<5>!ul<1>!li<1>!@class chart stay
 !tr<2>!td<5>!ul<1>!li<1> →
 !tr<2>!td<5>!ul<1>!li<2>!@class point
-!tr<2>!td<5>!ul<1>!li<2>!em<1>!@class daily-myli
-st
+!tr<2>!td<5>!ul<1>!li<2>!em<1>!@class daily-myl
+ist
 !tr<2>!td<5>!ul<1>!li<2>!em<1> 9,961
 !tr<2>!td<5>!ul<1>!li<2>
 !tr<2>!td<5>!ul<1>!li<3>!@class thumbnail
-!tr<2>!td<5>!ul<1>!li<3>!ul<1>!li<1>!@class thum
-bnail-image
-!tr<2>!td<5>!ul<1>!li<3>!ul<1>!li<1>!a<1>!@href 
-http:!!www.nicovideo.jp!watch!sm26826119
+!tr<2>!td<5>!ul<1>!li<3>!ul<1>!li<1>!@class thu
+mbnail-image
+!tr<2>!td<5>!ul<1>!li<3>!ul<1>!li<1>!a<1>!@href
+ http:!!www.nicovideo.jp!watch!sm26826119
       :
 ```
 
@@ -421,10 +423,10 @@ $ ./parsrx.sh -n nicochart.html |
 >       "!2:URL",$1);
 >   print;
 > }
-> $1~/!ul<1>!li<3>!ul<1>!li<1>!a<1>!img<1>!@titl
-e$/ {
->   sub(/!ul<1>!li<3>!ul<1>!li<1>!a<1>!img<1>!@t
-itle$/,"!3:tn",$1);
+> $1~/!ul<1>!li<3>!ul<1>!li<1>!a<1>!img<1>!@tit
+le$/ {
+>   sub(/!ul<1>!li<3>!ul<1>!li<1>!a<1>!img<1>!@
+title$/,"!3:tn",$1);
 >   print;
 > }
 > '
@@ -434,18 +436,17 @@ itle$/,"!3:tn",$1);
 
 ```
       :
-123456789012345678901234567890123456789012345678
 !tr<8>!td<1>!rownum 7
-!tr<8>!td<2>!2:URL http://www.nicovideo.jp/watch
-/sm26833352
-!tr<8>!td<2>!3:tn http://tn-skr1.smilevideo.jp/s
-mile?i=26833352
+!tr<8>!td<2>!2:URL http://www.nicovideo.jp/watc
+h/sm26833352
+!tr<8>!td<2>!3:tn http://tn-skr1.smilevideo.jp/
+smile?i=26833352
 !tr<8>!td<2>!1:title 【実況】 筆おろししてみまし
 た 【スプラトゥーン】
-!tr<8>!td<3>!2:URL http://www.nicovideo.jp/watch
-/sm26815374
-!tr<8>!td<3>!3:tn http://tn-skr3.smilevideo.jp/s
-mile?i=26815374
+!tr<8>!td<3>!2:URL http://www.nicovideo.jp/watc
+h/sm26815374
+!tr<8>!td<3>!3:tn http://tn-skr3.smilevideo.jp/
+smile?i=26815374
 !tr<8>!td<3>!1:title 【替え歌ってみた】 かいしゃ
 ぐらし！OP「お・し・ご・と・し・た・い」
       :
@@ -467,7 +468,7 @@ $ ./parsrx.sh -n nicochart.html |
 >    :
 > (注:途中のコードは省略)
 >    :
-> sed 's/ /_/g;s/_/ /' |
+> sed 's/ /_/g;s/_/ /'
 ```
 
 　とりあえず各行の全部の半角スペースを変換した後、先頭のアンダースコアだけ半角スペースに戻す。先頭のは列区切りのやつだからな。
@@ -477,16 +478,16 @@ $ ./parsrx.sh -n nicochart.html |
 ```
       :
 !tr<8>!td<1>!rownum 7
-!tr<8>!td<2>!2:URL http://www.nicovideo.jp/watch
-/sm26833352
-!tr<8>!td<2>!3:tn http://tn-skr1.smilevideo.jp/s
-mile?i=26833352
+!tr<8>!td<2>!2:URL http://www.nicovideo.jp/watc
+h/sm26833352
+!tr<8>!td<2>!3:tn http://tn-skr1.smilevideo.jp/
+smile?i=26833352
 !tr<8>!td<2>!1:title 【実況】_筆おろししてみまし
 た_【スプラトゥーン】
-!tr<8>!td<3>!2:URL http://www.nicovideo.jp/watch
-/sm26815374
-!tr<8>!td<3>!3:tn http://tn-skr3.smilevideo.jp/s
-mile?i=26815374
+!tr<8>!td<3>!2:URL http://www.nicovideo.jp/watc
+h/sm26815374
+!tr<8>!td<3>!3:tn http://tn-skr3.smilevideo.jp/
+smile?i=26815374
 !tr<8>!td<3>!1:title 【替え歌ってみた】_かいしゃ
 ぐらし！OP「お・し・ご・と・し・た・い」
       :
@@ -514,20 +515,20 @@ $ ./parsrx.sh -n nicochart.html |
 ```
       :
 9 1 rownum 8
-9 2 2:URL http://www.nicovideo.jp/watch/sm268092
-64
-9 2 3:tn http://tn-skr1.smilevideo.jp/smile?i=26
-809264
-9 2 1:title プライド革命_／_CHiCO_with_HoneyWork
-s
-9 3 2:URL http://www.nicovideo.jp/watch/sm268327
-83
-9 3 3:tn http://tn-skr4.smilevideo.jp/smile?i=26
-832783
+9 2 2:URL http://www.nicovideo.jp/watch/sm26809
+264
+9 2 3:tn http://tn-skr1.smilevideo.jp/smile?i=2
+6809264
+9 2 1:title プライド革命_／_CHiCO_with_HoneyWor
+ks
+9 3 2:URL http://www.nicovideo.jp/watch/sm26832
+783
+9 3 3:tn http://tn-skr4.smilevideo.jp/smile?i=2
+6832783
 9 3 1:title 【実況】自宅警備員もやっぱり怖すぎる
 Five_Nights_at_Freddy&#39;s4：03
-9 4 2:URL http://www.nicovideo.jp/watch/sm140270
-65
+9 4 2:URL http://www.nicovideo.jp/watch/sm14027
+065
       :
 ```
 
@@ -562,19 +563,18 @@ grep -v '^$'                          |
 
 ```
       :
-123456789012345678901234567890123456789012345678
 5 1 4
 5 2 【替え歌ってみた】_かいしゃぐらし！OP「お・
-し・ご・と・し・た・い」 http://www.nicovideo.jp
-/watch/sm26815374 http://tn-skr3.smilevideo.jp/s
-mile?i=26815374
+し・ご・と・し・た・い」 http://www.nicovideo.j
+p/watch/sm26815374 http://tn-skr3.smilevideo.jp
+/smile?i=26815374
 5 3 【ぼくなつ2】今年も夏の予定が何も無い【実況
-】#1 http://www.nicovideo.jp/watch/sm26834345 ht
-tp://tn-skr2.smilevideo.jp/smile?i=26834345
+】#1 http://www.nicovideo.jp/watch/sm26834345 h
+ttp://tn-skr2.smilevideo.jp/smile?i=26834345
 5 4 【ゆっくり雑談】無能運営にニコニコが発展する
-方法を教える講座動画 http://www.nicovideo.jp/wat
-ch/sm26826119 http://tn-skr4.smilevideo.jp/smile
-?i=26826119
+方法を教える講座動画 http://www.nicovideo.jp/wa
+tch/sm26826119 http://tn-skr4.smilevideo.jp/smi
+le?i=26826119
       :
 ```
 
@@ -596,8 +596,6 @@ $ ./parsrx.sh -n nicochart.html |
 >    :
 > (注:途中のコードは省略)
 >    :
-123456789012345678901234567890123456789012345678
-> (注:3-5列目の区切りを改行に変更しておく)
 > awk '                              #
 > $1!=r0 {printf("%s",LF);LF="\n";}  #
 > $1==r0 {printf(",")    ;        }  #
@@ -606,9 +604,9 @@ $ ./parsrx.sh -n nicochart.html |
 >   printf("\"%s\"",substr($0,pos)); #
 >   r0=$1;                           #
 > }'                                 |
-> (注:3-5列目の区切りを改行に変更しておく)
+> # 3-5列目の区切りを改行に変更しておく
 > tr ' ' '\n'                        |
-> (注:RFC4180に準拠するようShift_JIS化とCR+LF化)
+> # 注:RFC4180に準拠するようShift_JIS化とCR+LF化
 > iconv -f UTF-8 -t SJIS             |
 > sed "s/\$/$(printf '\r')/" > nicochart.csv
 ```
@@ -702,4 +700,3 @@ $ ./parsrx.sh -n nicochart.html |
 　お前たち想像してみろ。このハードスクレイピング男の威力をもってすれば、**あんなサイトやこんなサイトの画像を収集・整理**することもできるのだぞ！お前たちのパパやママやボスに、HTMLを解析するライブラリーのインストールを禁止されてももう泣かなくていいのだ。そして、まさか素の環境でスクレイピングしているとは想像もされないだろうから怪しまれること無くスクレイピング活動ができるのだ。
 
 　すばらしいだろう。シェルショッカーはまさに理想郷だ。さぁお前たちも、明日の夏コミ4日目からハードスクレイピングを実践するのだ！
-　
