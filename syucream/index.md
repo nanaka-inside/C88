@@ -6,7 +6,9 @@ Author(romaji): syu_cream
 # SHOW BY QUIC!!
 
 こんにちは、 @syu_cream です。
-本記事では、[ITMedia の記事](http://www.itmedia.co.jp/news/articles/1504/20/news046.html) などで一部界隈を賑わしている、 Google が提唱するプロトコル [QUIC(Quick UDP Internet Connection)](http://tools.ietf.org/html/draft-tsvwg-quic-protocol-01) について特徴や仕様などの簡単な紹介をしてみようと思います。
+タイトルは 2015 年春アニメのダークホース、 [SHOW BY ROCK!!](http://showbyrock-anime.com/) を意識しました。良い作品でした。サントラ買わなきゃ（使命感）
+
+さて本記事では、 [ITMedia の記事](http://www.itmedia.co.jp/news/articles/1504/20/news046.html) などで一部界隈を賑わしている、 Google が提唱するプロトコル [QUIC(Quick UDP Internet Connection)](http://tools.ietf.org/html/draft-tsvwg-quic-protocol-01) について特徴や仕様などの簡単な紹介をしてみようと思います。
 
 記事の内容には注意を払っておりますが、正確性が保証されているものではありません。
 気になる箇所についてはぜひ、ご自身で仕様や実装を読んで確かめていただければと思います。
@@ -100,9 +102,9 @@ TLS の Session resumption や False Start によってセッション確立ま�
 
 ![図3. TCP の HoL(Head of Line) ブロッキング](img/fig03.png)
 
-### QUIC が実現する世界
+### QUIC が実現する世界 〜青春はNon-(HoL)Blocking!〜
 
-まずは QUIC の利点に着目してみます。
+HTTP/2 で残された課題を念頭に置きつつ、 QUIC の利点に注目してみます。
 TCP + TLS + HTTP/2 の構成と比べ、 QUIC + HTTP/2 の構成では下記のような利点が生じます。
 
 * コネクション確立のレイテンシが低い
