@@ -421,17 +421,12 @@ QUIC ではストリームの優先度については特になにも行いませ
 
 ヘッダストリームに流れるオクテットストリームは下記のようなフォーマットをとります。
 
-```
-0            3     4            7    8           11     12
-+--------+- ... ---+--------+- ... --+--------+- ... ---+------ ...
-|     Priority     |    Stream ID    |  Headers length  | Headers
-+--------+- ... ---+--------+- ... --+--------+- ... ---+------ ...
+![図6. ヘッダストリームフォーマット](img/fig06.png)
 
 * Priority: 32 ビットの優先度値
-* Stream ID: QUIC のストリーム ID に紐付いた HTTP/2 における 32 ビットのストリーム ID
+* Stream ID: 32 ビットのストリーム ID
 * Header length: 32 ビットのヘッダの長さ
 * Headers: HPACK で圧縮されたヘッダ
-```
 
 ### Alternate-Protocol ヘッダによるプロトコルネゴシエーション
 
@@ -459,14 +454,14 @@ Alternate-Protocol ヘッダは下記のような形式をとります。
 それでは、 QUIC において新規にコネクションを確立してからリクエストを送信し、レスポンスを受け取ってコネクションを終了するまでの処理の流れを見てみましょう。
 （簡単化のため ACK, STOP_WAITING, WINDOW_UPDATE フレームなどのやり取りを省いて記述しています）
 
-![図6. QUIC の処理のフロー](img/fig06.png)
+![図7. QUIC の処理のフロー](img/fig07.png)
 
 ### Chrome で QUIC を体感してみる
 
 Google Chrome には既に QUIC が実装されており、 QUIC に対応している Google のサーバにリクエストを投げることで QUIC をすぐに体験することができます。
 Chrome のアドレスバーに chrome://net-internals/#quic と打ち込むと下図のように現在の QUIC セッションの情報が確認できます。
 
-![図7. QUIC の処理のフロー](img/fig07.png)
+![図8. Chrome の QUIC セッション一覧画面](img/fig08.png)
 
 ここからさらに chrome://net-internals/#events の画面に遷移することでやり取りされている QUIC パケットやフレームを確認することもできます。
 
